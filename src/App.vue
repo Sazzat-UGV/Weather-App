@@ -1,55 +1,84 @@
-<script setup></script>
+<script setup>
+import { useWeatherStore } from "./stores/weather";
+const weatherStore = useWeatherStore();
+</script>
 
 <template>
   <div class="container">
     <div class="wrap">
       <div class="search-box">
-        <input type="text" class="search-bar" placeholder="Search..." />
+        <input
+          type="text"
+          class="search-bar"
+          placeholder="Search..."
+          v-model="weatherStore.location_query"
+          @keypress="weatherStore.fetchWeather"
+        />
       </div>
 
-      <div class="weather-info">
-      <div class="location-box">
-      <div class="location">
-      Dhaka</div>
-      <div class="date">
-      17-12-2022</div>
-      </div>
-      <div class="weather-box">
-      <div class="temp">22°C</div>
-      <div class="weather">dflsfj</div>
-      </div>
+      <div class="weather-info" v-if="weatherStore.weather.main != undefined">
+        <div class="location-box">
+          <div class="location">
+            {{ weatherStore.weather.name }},{{
+              weatherStore.weather.sys.country
+            }}
+          </div>
+          <div class="date">{{ new Date().toLocaleString() }}</div>
+        </div>
+        <div class="weather-box">
+          <div class="temp">{{ weatherStore.weather.main.temp }} °C</div>
+          <div class="weather">{{ weatherStore.weather.weather[0].main }}</div>
+          <div class="icon">
+            <img
+              :src="`https://openweathermap.org/img/wn/${weatherStore.weather.weather[0].icon}@2x.png`"
+              alt=""
+            />
+          </div>
+          <div class="other-info">
+            <span class="pressure"
+              >Pressure: {{ weatherStore.weather.main.pressure }} mb</span
+            >
+            <span class="pressure"
+              >Humidity: {{ weatherStore.weather.main.humidity }} %</span
+            >
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Montserrat", sans-serif;
 }
-.container{
-  background-image: url('./assets/default.jpg');
+.container {
+  background-image: url("./assets/default.jpg");
   background-size: cover;
   background-position: center;
   transition: 0.4s;
   width: 375px;
   margin: 0 auto;
   border-radius: 25px;
-  margin-top: 50px;
+  margin-top: 30px;
   box-shadow: 0px 0px 30px #00000065;
 }
-.wrap{
-  height: 600px;
+.wrap {
+  height: 650px;
   padding: 25px;
   border-radius: 25px;
-  background-image: linear-gradient(to bottom, rgba(0,0,0,0.15),rgba(0,0,0,0.4))
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.4)
+  );
 }
-.search-box .search-bar{
+.search-box .search-bar {
   display: block;
   width: 100%;
   padding: 15px;
@@ -60,50 +89,59 @@
   outline: none;
   background: none;
   background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0px 0px 8px rgba(0,0,0,0.25);
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   transition: 0.4s;
 }
-.search-box .search-bar:focus{
+.search-box .search-bar:focus {
   transition: 0.4s;
-  box-shadow: 0px 0px 16px rgba(0,0,0,0.25);
+  box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);
   background-color: rgba(255, 255, 255, 0.75);
 }
-.location-box .location{
+.location-box .location {
   color: white;
-font-size: 32px;
-font-weight: 500;
-text-align: center;
-font-style: italic;
-margin-top: 30px;
+  font-size: 32px;
+  font-weight: 500;
+  text-align: center;
+  font-style: italic;
+  margin-top: 30px;
 }
-.location-box .date{
+.location-box .date {
   color: white;
   font-size: 20px;
   font-weight: 300;
   text-align: center;
 }
-.weather-box{
+.weather-box {
   text-align: center;
 }
-.weather-box .temp{
+.weather-box .temp {
   display: inline-block;
   padding: 10px 25px;
   color: white;
   font-size: 100px;
   font-weight: 900;
-  text-shadow: 3px 6px rgba(0, 0, 0, .25);
-  background-color: rgba(255, 255, 255, .25);
+  text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
+  background-color: rgba(255, 255, 255, 0.25);
   border-radius: 16px;
-  margin: 30px 0;
-  box-shadow: 3px 6px rgba(0, 0, 0, .25);
+  margin: 10px 0;
+  box-shadow: 3px 6px rgba(0, 0, 0, 0.25);
   font-style: italic;
 }
-.weather-box .weather{
+.weather-box .weather {
   color: white;
   font-size: 48px;
   font-weight: 700;
   font-style: italic;
-  text-shadow: 3px 6px rgba(0, 0, 0, .25);
+  text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
+}
+.pressure {
+  color: white;
+  font-size: 18px;
+}
+.other-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
